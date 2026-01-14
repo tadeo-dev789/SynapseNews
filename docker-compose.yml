@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./backend
+    container_name: server_api  
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app          
+      - ./backend/data:/app/data
+    environment:
+      - SELENIUM_URL=http://browser:4444/wd/hub
+      - DATABASE_URL=sqlite:///./data/database.db
+    depends_on:
+      - browser
+
+  browser:
+    image: selenium/standalone-chromium:latest
+    container_name: server_browser
+    shm_size: 2gb               
+    ports:
+      - "4444:4444"

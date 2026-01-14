@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlmodel
+requests
+selenium
+google-generativeai
+python-dotenv
+yfinance
