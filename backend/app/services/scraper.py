@@ -41,9 +41,9 @@ def get_article_body(driver,url):
         
         text_cont = []
         
-        for p in paragraphs[:5]:
+        for p in paragraphs[:10]:
             text = p.text.strip()
-            if len(text) > 5: #Aqui lo que hace es ignorar los textos que son cortos en la noticia
+            if len(text) > 20: #Aqui lo que hace es ignorar los textos que son cortos en la noticia
                 text_cont.append(text)
         
         full_text = " ".join(text_cont)
@@ -85,10 +85,25 @@ def scrape_category(category_key: str):
             
         unique_links = {v['url']:v for v in links_found}.values()
         
+        black_list = [
+            "newsletter", 
+            "signup", 
+            "cloud.email.bbc", 
+            "/sport/",
+            "/reel/",       
+            "register",
+            "login"
+        ]
         for item in unique_links:
             
             if len(news_list) >= 10:
                 break
+            
+            url_lower = item["url"].lower()
+            
+            if any(banned in url_lower for banned in black_list):
+                print("SALTANDO PUBLICIDAD")
+                continue
             
             body_text = get_article_body(driver, item["url"])
             
@@ -98,7 +113,7 @@ def scrape_category(category_key: str):
                     "original_title": item["title"],
                     "url": item["url"],
                     "category": category_key,
-                    "full_text": body_text # <--- ESTO ES ORO PURO PARA LA IA
+                    "full_text": body_text
                 })
         
         return {

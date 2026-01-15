@@ -3,6 +3,6 @@ uvicorn
 sqlmodel
 requests
 selenium
-google-generativeai
+google-genai
 python-dotenv
 yfinance
