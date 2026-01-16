@@ -1,13 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from dotenv import load_dotenv
 from pathlib import Path
-import os
-import time
 
-env_path = Path (__file__).resolve().parent.parent.parent / '.env'
-load_dotenv(dotenv_path=env_path)
+from app.config import settings 
+import time
 
 SOURCES = {
     "tecnologia": "https://www.bbc.com/innovation",
@@ -15,7 +12,7 @@ SOURCES = {
 }
 
 def get_driver():
-    selenium_url = os.getenv("SELENIUM_URL")
+    selenium_url = settings.SELENIUM_URL
     options = Options()
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -55,7 +52,7 @@ def get_article_body(driver,url):
         return "Error extrayendo contenido."
     
     
-def scrape_category(category_key: str):
+def scrape_category(category_key: str, ignore_urls: list = []):
     if category_key not in SOURCES:
         return {"error" : "Categoria no registrada"}
     
@@ -96,14 +93,17 @@ def scrape_category(category_key: str):
         ]
         for item in unique_links:
             
-            if len(news_list) >= 10:
-                break
-            
             url_lower = item["url"].lower()
             
-            if any(banned in url_lower for banned in black_list):
-                print("SALTANDO PUBLICIDAD")
+            if len(news_list) >= 4:
+                break
+                
+            if any(x in item["url"].lower() for x in black_list):
                 continue
+                
+            if item["url"] in ignore_urls:
+                print(f"Noticia conocida detectada: {item['title'][:15]}... DETENIENDO.")
+                break
             
             body_text = get_article_body(driver, item["url"])
             

@@ -1,18 +1,14 @@
 from google import genai
-import os
 
-from dotenv import load_dotenv
+from app.config import settings
 from pathlib import Path
 
 import time
-
-env_path = Path(__file__).resolve().parent.parent.parent / '.env'
-load_dotenv(dotenv_path=env_path)
+import random
 
 def configure_ai():
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        print("ERROR FALTA LA GEMINI_API_KEY en el .env")
+    if not settings.GEMINI_API_KEYS:
+        print("ERROR: FLATA LA GEMINI_API_KEY en el .env")
         return False
     return True
 
@@ -20,11 +16,14 @@ def rewrite_news(text_content: str, category: str):
     if not configure_ai():
         return "Error: LA IA NO SE HA CONFIGURADO"
     
-    max_retries = 3
+    max_retries = len(settings.GEMINI_API_KEYS) * 2
     
     for attempt in range(max_retries):
+        
+        current_key = random.choice(settings.GEMINI_API_KEYS)
+        
         try:
-            client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+            client = genai.Client(api_key=current_key)
             
             prompt = f"""
             Rol: Eres un redactor senior de un blog de {category} muy popular.
@@ -60,10 +59,11 @@ def rewrite_news(text_content: str, category: str):
             error_msg = str(e)
             
             if "429" in error_msg:
-                print(f"Límite de Google alcanzado. Esperando 35 segundos... (Intento {attempt+1}/{max_retries})")
-                time.sleep(35)
+                print(f"Llave agotada. Cambiando a otra... ")
                 continue
             print(f"Error IA Irrecuperable: {error_msg}")
             return f"ERROR GENERANDO CONTENIDO: {str(e)}"
-        
+    
+    print("Se agotaron TODAS las llaves. Esperando 10s antes de rendirnos...")
+    time.sleep(10)
     return "Error: Se excedió el número de intentos con la IA."

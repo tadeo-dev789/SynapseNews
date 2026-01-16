@@ -6,3 +6,5 @@ selenium
 google-genai
 python-dotenv
 yfinance
+dotenv
+apscheduler
