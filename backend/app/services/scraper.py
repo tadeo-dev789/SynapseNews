@@ -41,7 +41,7 @@ def get_article_body(driver,url):
         
         text_cont = []
         
-        for p in paragraphs[:10]:
+        for p in paragraphs[:15]:
             text = p.text.strip()
             if len(text) > 20: #Aqui lo que hace es ignorar los textos que son cortos en la noticia
                 text_cont.append(text)
@@ -108,7 +108,7 @@ def scrape_category(category_key: str):
             body_text = get_article_body(driver, item["url"])
             
             # Si logramos sacar texto, lo guardamos
-            if len(body_text) > 100:
+            if len(body_text) > 80:
                 news_list.append({
                     "original_title": item["title"],
                     "url": item["url"],
