@@ -70,12 +70,18 @@ def send_daily_newsletter():
     
     with Session(engine) as session:
 
-        todays_news = session.exec(select(New).where(New.created_at >= today_start)).all()
+        todays_news = session.exec(
+            select(New)
+            .where(New.created_at >= today_start)
+            .order_by(New.created_at.desc())
+            .limit(10)
+        ).all()
         
         if not todays_news:
             print("No hay noticias hoy para enviar.")
             return
 
+        print(f"Seleccionadas {len(todays_news)} noticias más relevantes del día para el newsletter")
 
         subscribers = session.exec(select(Subscriber).where(Subscriber.is_active == True)).all()
         

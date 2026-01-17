@@ -18,6 +18,14 @@ class Settings:
     
     GEMINI_API_KEYS: list = [k.strip() for k in _keys_str.split(",") if k.strip()]
     
+    EODHD_API_KEY = os.getenv("EODHD_API_KEY")
+    
+    TOP_STOCK_SYMBOLS = [
+        s.strip()
+        for s in os.getenv("TOP_STOCK_SYMBOLS", "").split(",")
+        if s.strip()
+    ]
+    
     SELENIUM_URL: str = os.getenv("SELENIUM_URL", "http://selenium:4444/wd/hub")
     
     SMTP_SERVER: str = os.getenv("SMTP_SERVER")
