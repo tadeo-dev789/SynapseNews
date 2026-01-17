@@ -1,4 +1,37 @@
-export default function Home() {
+import MarketTicker from "@/components/MarketTicker";
+
+export default async function Home() {
+
+  async function getData() {
+    try{
+      const[marketRes,businessRes,techRes] = await Promise.all([
+        fetch("http://localhost:8000/api/markets",{cache:"no-store"}),
+        fetch("http://localhost:8000/api/news?category=tecnologia&limit=4",{cache:"no-store"}),
+        fetch("http://localhost:8000/api/news?category=negocios&limit=4",{cache:"no-store"})
+      ]);
+
+      return {
+        markets: await marketRes.json(),
+        tech: await techRes.json(),
+        business: await businessRes.json()
+      };
+
+    }catch(error){
+      console.error("Error conectando al backend:", error);
+      return { markets: {}, tech: {}, business: {} };
+    }
+  }
+
+  const data = await getData();
+
+  const techNews = data.tech?.data || [];
+  const businessNews = data.business?.data || [];
+  const marketCount = (data.markets?.acciones?.length || 0) + (data.markets?.cripto?.length || 0);
+
+  const today = new Date().toLocaleDateString('es-MX', { 
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+  });
+
   return (
     <main className="min-h-screen p-6 font-sans text-black bg-white">
       
@@ -9,13 +42,13 @@ export default function Home() {
         </div>
         <div className="text-right">
           <div className="text-xs font-mono bg-gray-100 px-2 py-1">
-            [Fecha del Sistema]
+            {today}
           </div>
         </div>
       </header>
-
-      <div className="w-full h-10 bg-black text-white flex items-center justify-center mb-8 font-mono text-sm">
-        [ Ticker Financiero: Acciones y Criptos ]
+  
+      <div className="mb-8">
+         <MarketTicker data={data.markets} />
       </div>
 
       <section className="mb-12">
