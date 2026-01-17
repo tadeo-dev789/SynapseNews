@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import Depends, FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -98,7 +99,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"proyecto": "SynapseNews", "status": "Online 🟢", "scheduler": "Active"}
+    return {"proyecto": "SynapseNews", "status": "Online", "scheduler": "Active"}
 
 @app.post("/api/subscribe")
 def subscribe_newsletter(email: str, session: Session = Depends(get_session)):
@@ -119,8 +120,29 @@ def trigger_newsletter(background_tasks: BackgroundTasks):
 
 
 @app.get("/api/news")
-def get_news(session: Session = Depends(get_session)):
-    return session.exec(select(New).order_by(New.created_at.desc())).all()
+def get_news(page: int = 1, limit: int =10, category:Optional[str]=None,session: Session = Depends(get_session)):
+    offset = (page -1) * limit
+    query = select(New)
+
+    if category:
+        query = query.where(New.category == category)
+
+    total = len(session.exec(query).all())
+    news = session.exec(
+    query.order_by(New.created_at.desc())
+    .offset(offset)
+    .limit(limit)
+    ).all()
+    
+    return {
+        "data": news,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit
+    }
+
+
 
 
 @app.post("/api/update-news/{category}")
