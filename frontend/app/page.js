@@ -1,10 +1,10 @@
 import MarketTicker from "@/components/MarketTicker";
-
+import HomeHero from "@/components/HomeHero";
 export default async function Home() {
 
   async function getData() {
     try{
-      const[marketRes,businessRes,techRes] = await Promise.all([
+      const[marketRes,techRes,businessRes] = await Promise.all([
         fetch("http://localhost:8000/api/markets",{cache:"no-store"}),
         fetch("http://localhost:8000/api/news?category=tecnologia&limit=4",{cache:"no-store"}),
         fetch("http://localhost:8000/api/news?category=negocios&limit=4",{cache:"no-store"})
@@ -27,6 +27,8 @@ export default async function Home() {
   const techNews = data.tech?.data || [];
   const businessNews = data.business?.data || [];
   const marketCount = (data.markets?.acciones?.length || 0) + (data.markets?.cripto?.length || 0);
+
+  const heroStory = businessNews.length > 0 ? businessNews[0] : null;
 
   const today = new Date().toLocaleDateString('es-MX', { 
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
@@ -52,10 +54,7 @@ export default async function Home() {
       </div>
 
       <section className="mb-12">
-        <div className="border border-gray-300 h-64 bg-gray-50 flex flex-col items-center justify-center text-gray-400">
-          <span className="font-bold text-lg text-black mb-2">HERO SECTION</span>
-          <p>Aquí se renderizará la noticia principal</p>
-        </div>
+        <HomeHero news={heroStory} />
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
