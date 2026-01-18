@@ -3,6 +3,7 @@ import HomeHero from "@/components/HomeHero";
 import NewsGrid from "@/components/NewsGrid";
 import NewsLetterForm from "@/components/NewsLetterForm";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function Home() {
 
@@ -41,12 +42,34 @@ export default async function Home() {
   return (
     <main className="min-h-screen p-6 font-sans text-black bg-white">
       <header className="flex flex-col md:flex-row justify-between items-end mb-8 border-b-2 border-black pb-4">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tighter">SynapseNews</h1>
-          <p className="text-sm text-gray-600">Hackathon Edition</p>
+        
+        <div className="flex items-center gap-4">
+          
+          <div className="relative w-14 h-14 md:w-16 md:h-16 flex-shrink-0">
+            <Image 
+              src="/icon.png"
+              alt="Synapse News Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter leading-none">
+              SynapseNews
+            </h1>
+            <p className="text-sm text-gray-500 font-mono mt-1">
+              Hackathon Edition 
+            </p>
+          </div>
+
         </div>
-        <div className="text-right">
-          <div className="text-xs font-mono bg-gray-100 px-2 py-1">{today}</div>
+
+        <div className="text-right mt-4 md:mt-0">
+          <div className="text-xs font-mono bg-gray-100 border border-gray-200 px-3 py-1 uppercase tracking-widest text-gray-500">
+            {today}
+          </div>
         </div>
       </header>
 
