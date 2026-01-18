@@ -30,10 +30,6 @@ async def lifespan(app:FastAPI):
     scheduler.add_job(update_news_job, 'interval', minutes=360)
     scheduler.add_job(update_market_snapshot, 'interval', hours=1)
     scheduler.add_job(send_daily_newsletter, 'cron', hour=8, minute=0)
-    #PRUEBAS
-    # scheduler.add_job(update_news_job)
-    # scheduler.add_job(update_market_snapshot)
-    # scheduler.add_job(send_daily_newsletter)
     scheduler.start()
     print("SCHEDULER INICIADO: Actualización automática activa.")
     
@@ -54,6 +50,11 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"proyecto": "SynapseNews", "status": "Online", "scheduler": "Active"}
+
+@app.post("/api/update-markets/now")
+def force_market_update(background_tasks: BackgroundTasks):
+    background_tasks.add_task(update_market_snapshot)
+    return {"status": "Iniciado", "mensaje": "Actualizando datos de mercado en segundo plano..."}
 
 
 @app.post("/api/subscribe")

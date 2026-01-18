@@ -95,7 +95,7 @@ def scrape_category(category_key: str, ignore_urls: list = []):
             
             url_lower = item["url"].lower()
             
-            if len(news_list) >= 4:
+            if len(news_list) >= 10:
                 break
                 
             if any(x in item["url"].lower() for x in black_list):
