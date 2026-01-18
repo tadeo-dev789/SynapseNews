@@ -62,7 +62,34 @@ def send_email(subject, body, to_email):
     except Exception as e:
         print(f"ERROR ENVIANDO EL EMAIL A {to_email}: {e}")
         return False
+
+def send_welcome_email(to_email):
+    subject = "¡Bienvenido a SynapseNews! 🚀"
+    body = """
+    <html>
+    <body style="font-family: Arial, sans-serif; color: #333;">
+        <div style="background-color: #f4f4f4; padding: 20px; text-align: center;">
+            <h1 style="color: #2c3e50;">Bienvenido a SynapseNews</h1>
+            <p>Inteligencia Artificial aplicada a los mercados.</p>
+        </div>
+        <div style="padding: 20px; max-width: 600px; margin: 0 auto;">
+            <p>Hola,</p>
+            <p>Tu suscripción ha sido confirmada. A partir de mañana recibirás:</p>
+            <ul>
+                <li>Resúmenes concisos de Tecnología.</li>
+                <li>Análisis de tendencias de Negocios.</li>
+            </ul>
+            <p style="font-size: 12px; color: #777; margin-top: 30px;">
+                Si deseas desuscribirte, puedes hacerlo desde nuestra plataforma web.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
     
+    return send_email(subject,body, to_email)
+
+
 def send_daily_newsletter():
     print("Iniciando proceso de envío de Newsletter...")
     
